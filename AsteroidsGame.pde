@@ -6,15 +6,17 @@ public void setup() {
 }
 public void draw() {
   apollo.show();
+  apollo.move();
+  keyPressed();
 }
 class SpaceShip extends Floater {   
     public SpaceShip() {
       corners = 12;
-      int[] xS = {-25,25,25, 5,  5, 25, 25,-25,-25, -5, -5,-25};
+      int[] xS = {-25, 0,25,-5, -5, 25,  0,-25,-25,-10,-10,-25};
       int[] yS = { 15,15,10,10,-10,-10,-15,-15,-10,-10, 10, 10};
       xCorners = xS;
       yCorners = yS;
-      myColor = color(50, 80, 100);;
+      myColor = color(204, 204, 204);;
       myCenterX = screenSize/2;
       myCenterY = screenSize/2;
       myDirectionX = 0;
@@ -61,13 +63,57 @@ abstract class Floater {
   public void rotate (int nDegreesOfRotation) {     
     //rotates the floater by a given number of degrees    
     myPointDirection+=nDegreesOfRotation;   
-  }   
+  }
+
+  boolean goingUp = false;
+  boolean sIsPressed = false;
+  boolean dIsPressed = false;
+  boolean wIsPressed = false;
+  boolean spaceIsPressed = false;
+  boolean pIsPressed = false;
+  public void keyPressed() {
+    if (key == CODED) {
+      if (keyCode == UP) {apollo.accelerate(1);}
+      if (keyCode == DOWN) {apollo.accelerate(1);}
+      if (keyCode == RIGHT) {apollo.rotate(1);}
+      if (keyCode == LEFT) {apollo.rotate(-1);}
+    }
+  }
+  public void keyPressed() {
+  if (key == 'a' || key == 'A') {goingUp = true;}
+  if (key == 'd' || key =='D') {dIsPressed = true;}
+  if (key == 'w' || key == 'W') {wIsPressed = true;} 
+  if (key == 's' || key == 'S') {sIsPressed = true;}
+  if (key == 'q' || key == 'Q') { //Hyperspace
+    normandy.setX((int)(Math.random()*width));
+    normandy.setY((int)(Math.random()*height));
+    normandy.setPointDirection((int)(Math.random()*360));
+    normandy.setDirectionX(0);
+    normandy.setDirectionY(0);
+  } 
+  if (key == 32) {
+    if (shotCounter + 10 < gameCounter) {
+      bullets.add(new Bullet(normandy));
+      shotCounter = gameCounter;
+    }
+  }
+}
+
+public void keyReleased() {
+  if (key == 'a' || key == 'A') {goingUp = false;}
+  if (key == 'd' || key == 'D') {dIsPressed = false;} 
+  if (key == 'w' || key == 'W') {wIsPressed = false;} 
+  if (key == 's' || key == 'S') {sIsPressed = false;} 
+  if (key == 'p' || key == 'P') {togglePause = !togglePause;}
+  if (keyCode == 32) {spaceIsPressed = false;}
+}
+
   public void move () {      
     //change the x and y coordinates by myDirectionX and myDirectionY       
-    myCenterX += myDirectionX;    
-    myCenterY += myDirectionY;      
-    if(myCenterX >width) {     
-      myCenterX = 0;    
+    myCenterX += myDirectionX;
+    myCenterY += myDirectionY;
+    if(myCenterX >width) {
+      myCenterX = 0;
     } else if (myCenterX<0) {     
       myCenterX = width;    
     }    
@@ -93,4 +139,3 @@ abstract class Floater {
     endShape(CLOSE);  
   }   
 } 
-
