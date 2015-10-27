@@ -1,16 +1,27 @@
 int screenSize = 400;
-SpaceShip apollo = new SpaceShip();
+SpaceShip apollo;
 public void setup() {
   size(screenSize, screenSize);
-  background(0);
+  apollo = new SpaceShip();
 }
 public void draw() {
+  background(0);
+  moveShip();
   apollo.show();
   apollo.move();
-  keyPressed();
 }
 class SpaceShip extends Floater {   
-    public SpaceShip() {
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int)myCenterX;}
+  public void setY(int y) {myCenterY = y;}
+  public int getY() {return (int)myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}
+  public double getDirectionY() {return myDirectionY;}
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}
+  public double getPointDirection() {return myPointDirection;}
+  public SpaceShip() {
       corners = 12;
       int[] xS = {-25, 0,25,-5, -5, 25,  0,-25,-25,-10,-10,-25};
       int[] yS = { 15,15,10,10,-10,-10,-15,-15,-10,-10, 10, 10};
@@ -23,17 +34,47 @@ class SpaceShip extends Floater {
       myDirectionY = 0;
       myPointDirection = 0;
     }
-    public void setX(int x) {myCenterX = x;}
-    public int getX() {return (int)myCenterX;}
-    public void setY(int y) {myCenterY = y;}
-    public int getY() {return (int)myCenterY;}
-    public void setDirectionX(double x) {myDirectionX = x;}
-    public double getDirectionX() {return myDirectionX;}
-    public void setDirectionY(double y) {myDirectionY = y;}
-    public double getDirectionY() {return myDirectionY;}
-    public void setPointDirection(int degrees) {myPointDirection = degrees;}
-    public double getPointDirection() {return myPointDirection;}
 }
+boolean goingUp = false;
+boolean goingLeft = false;
+boolean goingDown = false;
+boolean goingRight = false;
+boolean shoot = false;
+//int shotCounter = -10;
+public void keyPressed() {
+  if (key == 38) {goingUp = true;}
+  if (key == 40) {goingDown = true;}
+  if (key == 39) {goingRight = true;} 
+  if (key == 37) {goingLeft = true;}
+  //if (key == 32) {
+    //if (shotCounter + 10 < gameCounter) {
+      //bullets.add(new Bullet(apollo));
+      //shotCounter = gameCounter;
+    //}
+  //}
+}
+public void keyReleased() {
+  if (key == 38) {goingUp = false;}
+  if (key == 40) {goingDown = false;} 
+  if (key == 39) {goingRight = false;} 
+  if (key == 37) {goingLeft = false;}
+  if (keyCode == 32) {shoot = false;}
+}
+public void moveShip() {
+  if (goingUp) {
+    apollo.accelerate(0.3);
+  } 
+  if (goingDown) {
+    apollo.accelerate(-0.3);
+  } 
+  if (goingRight) {
+    apollo.rotate(8);
+  } 
+  if (goingLeft) {
+    apollo.rotate(-8);
+  } 
+}
+
 abstract class Floater {   
   protected int corners;  //the number of corners, a triangular floater has 3   
   protected int[] xCorners;   
@@ -52,6 +93,7 @@ abstract class Floater {
   abstract public double getDirectionY();
   abstract public void setPointDirection(int degrees);
   abstract public double getPointDirection();
+  
   //Accelerates the floater in the direction it is pointing (myPointDirection)   
   public void accelerate (double dAmount) {          
     //convert the current direction the floater is pointing to radians    
@@ -64,65 +106,21 @@ abstract class Floater {
     //rotates the floater by a given number of degrees    
     myPointDirection+=nDegreesOfRotation;   
   }
-
-  boolean goingUp = false;
-  boolean sIsPressed = false;
-  boolean dIsPressed = false;
-  boolean wIsPressed = false;
-  boolean spaceIsPressed = false;
-  boolean pIsPressed = false;
-  public void keyPressed() {
-    if (key == CODED) {
-      if (keyCode == UP) {apollo.accelerate(1);}
-      if (keyCode == DOWN) {apollo.accelerate(1);}
-      if (keyCode == RIGHT) {apollo.rotate(1);}
-      if (keyCode == LEFT) {apollo.rotate(-1);}
-    }
-  }
-  public void keyPressed() {
-  if (key == 'a' || key == 'A') {goingUp = true;}
-  if (key == 'd' || key =='D') {dIsPressed = true;}
-  if (key == 'w' || key == 'W') {wIsPressed = true;} 
-  if (key == 's' || key == 'S') {sIsPressed = true;}
-  if (key == 'q' || key == 'Q') { //Hyperspace
-    normandy.setX((int)(Math.random()*width));
-    normandy.setY((int)(Math.random()*height));
-    normandy.setPointDirection((int)(Math.random()*360));
-    normandy.setDirectionX(0);
-    normandy.setDirectionY(0);
-  } 
-  if (key == 32) {
-    if (shotCounter + 10 < gameCounter) {
-      bullets.add(new Bullet(normandy));
-      shotCounter = gameCounter;
-    }
-  }
-}
-
-public void keyReleased() {
-  if (key == 'a' || key == 'A') {goingUp = false;}
-  if (key == 'd' || key == 'D') {dIsPressed = false;} 
-  if (key == 'w' || key == 'W') {wIsPressed = false;} 
-  if (key == 's' || key == 'S') {sIsPressed = false;} 
-  if (key == 'p' || key == 'P') {togglePause = !togglePause;}
-  if (keyCode == 32) {spaceIsPressed = false;}
-}
-
   public void move () {      
     //change the x and y coordinates by myDirectionX and myDirectionY       
     myCenterX += myDirectionX;
     myCenterY += myDirectionY;
-    if(myCenterX >width) {
+    if(myCenterX > width) {
       myCenterX = 0;
-    } else if (myCenterX<0) {     
+    } else if (myCenterX < 0) {     
       myCenterX = width;    
     }    
-    if(myCenterY >height) {    
+    if(myCenterY > height) {    
       myCenterY = 0;    
     } else if (myCenterY < 0) {     
       myCenterY = height;    
-    }   
-  }   
+    }
+  }
   public void show () {             
     fill(myColor);   
     stroke(myColor);    
@@ -138,4 +136,4 @@ public void keyReleased() {
     }   
     endShape(CLOSE);  
   }   
-} 
+}
