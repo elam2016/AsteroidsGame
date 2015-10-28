@@ -1,14 +1,34 @@
-int screenSize = 400;
+int screenSize = 600;
+Particle [] particles;
 SpaceShip apollo;
+Star [] stars;
 public void setup() {
 	size(screenSize, screenSize);
 	apollo = new SpaceShip();
+	noStroke();
+	particles = new Particle[screenSize/5];
+	for(int n = 0; n < particles.length; n++) {
+		particles[n] = new NormalParticle();
+	}
+	stars = new Star[screenSize/10];
+	for(int s = 0; s < stars.length; s++) {
+		stars[s] = new Star();
+	}
 }
 public void draw() {
 	background(0);
+	for(int s = 0; s < stars.length; s++) {
+		stars[s].show();
+		stars[s].move();
+	}
+	for(int n = 0; n < particles.length; n++) {
+		particles[n].show();
+		particles[n].move();
+	}
 	moveShip();
 	apollo.move();
 	apollo.show();
+
 }
 class SpaceShip extends Floater {   
 	public void setX(int x) {myCenterX = x;}
@@ -35,6 +55,27 @@ class SpaceShip extends Floater {
 		myPointDirection = 0;
 	}
 }
+
+public class Star {
+	float starX, starY, starSize;
+	public Star()
+	{
+		starX = (int)(Math.random()*width);
+		starY = (int)(Math.random()*height);
+		starSize = (int)(Math.random()*5);
+	}
+	public void show()
+	{
+		noStroke();
+		fill(255, 100);
+		ellipse(starX, starY, starSize, starSize);
+	}
+	public void move()
+	{
+		starX += .5;
+	}
+}
+
 boolean goingUp = false;
 boolean goingLeft = false;
 boolean goingDown = false;
@@ -62,10 +103,10 @@ public void keyReleased() {
 }
 public void moveShip() {
 	if (goingUp) {
-		apollo.accelerate(0.2);
+		apollo.accelerate(0.1);
 	}
 	if (goingDown) {
-		apollo.accelerate(-0.2);
+		apollo.accelerate(-0.1); //deccelerates ship (brakes)
 	}
 	if (goingRight) {
 		apollo.rotate(5);
@@ -75,6 +116,56 @@ public void moveShip() {
 	}
 }
 
+class NormalParticle implements Particle {
+	double nX, nY, nSpeed, nAngle;
+	float nSize;
+	color nColor = color(((int)(Math.random()*40 + 200)), ((int)(Math.random()*45 + 207)), ((int)(Math.random()*45 + 170)), 70);
+	NormalParticle() {
+		nX = screenSize/2;
+		nY = screenSize/2;
+		nSpeed = ((Math.random()*5) + 1);
+		nAngle = (Math.random()*(2*Math.PI));
+		nSize = 2;
+	}
+	public void move() {
+		if(nX > (screenSize + 10) || nY > (screenSize + 10) || nX < -10 || nY < -10) {
+			nX = screenSize/2;
+			nY = screenSize/2;
+			nSize = 2;
+			nSpeed = ((Math.random()*5) + 1);
+			nAngle = (Math.random()*(2*Math.PI));
+			nColor = color(((int)(Math.random()*40 + 200)), ((int)(Math.random()*45 + 180)), ((int)(Math.random()*45 + 170)), 70);
+		}
+		nX += (Math.cos(nAngle)*nSpeed);
+		nY += (Math.sin(nAngle)*nSpeed);
+		nSize += .05;
+	}
+	public void show() {
+		fill(nColor);
+		noStroke();
+		ellipse((float)nX, (float)nY, (int)nSize, (int)nSize);
+	}
+}
+interface Particle {
+	public void move();
+	public void show();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//-------- DO NOT CHANGE CODE BELOW --------//
 abstract class Floater {   
 	protected int corners;  //the number of corners, a triangular floater has 3   
 	protected int[] xCorners;   
