@@ -2,6 +2,7 @@ int screenSize = 600;
 Particle [] particles;
 SpaceShip apollo;
 Star [] stars;
+int level = 1;
 public void setup() {
 	size(screenSize, screenSize);
 	apollo = new SpaceShip();
@@ -42,9 +43,14 @@ class SpaceShip extends Floater {
 	public void setPointDirection(int degrees) {myPointDirection = degrees;}
 	public double getPointDirection() {return myPointDirection;}
 	public SpaceShip() {
-		corners = 12;
-		int[] xS = {-25, 0,25,-5, -5, 25,  0,-25,-25,-10,-10,-25};
-		int[] yS = { 15,15,10,10,-10,-10,-15,-15,-10,-10, 10, 10};
+		corners = 17;
+		int[] xS = {-20,-25,-25, -5,-5, 5,5,25,25, 5,  5, , , , , , };
+		int[] yS = { 10, 10, 15, 15,10,10,5, 5,-5,-5,-10, , , , , , };
+		if(level == 2) {
+			corners = 12;
+			int[] xS = {-25, 0,25,-5, -5, 25,  0,-25,-25,-10,-10,-25};
+			int[] yS = { 15,15,10,10,-10,-10,-15,-15,-10,-10, 10, 10};
+		}
 		xCorners = xS;
 		yCorners = yS;
 		myColor = color(204, 204, 204);;
@@ -58,21 +64,22 @@ class SpaceShip extends Floater {
 
 public class Star {
 	float starX, starY, starSize;
-	public Star()
-	{
+	public Star() {
 		starX = (int)(Math.random()*width);
 		starY = (int)(Math.random()*height);
 		starSize = (int)(Math.random()*5);
 	}
-	public void show()
-	{
+	public void show() {
 		noStroke();
 		fill(255, 100);
 		ellipse(starX, starY, starSize, starSize);
 	}
-	public void move()
-	{
+	public void move() {
 		starX += .5;
+		if(starX > screenSize) {
+			starX = -5;
+			starY = (int)(Math.random()*height);
+		}
 	}
 }
 
@@ -116,11 +123,11 @@ public void moveShip() {
 	}
 }
 
-class NormalParticle implements Particle {
+public class NormalParticle implements Particle {
 	double nX, nY, nSpeed, nAngle;
 	float nSize;
 	color nColor = color(((int)(Math.random()*40 + 200)), ((int)(Math.random()*45 + 207)), ((int)(Math.random()*45 + 170)), 70);
-	NormalParticle() {
+	public NormalParticle() {
 		nX = screenSize/2;
 		nY = screenSize/2;
 		nSpeed = ((Math.random()*5) + 1);
@@ -146,7 +153,7 @@ class NormalParticle implements Particle {
 		ellipse((float)nX, (float)nY, (int)nSize, (int)nSize);
 	}
 }
-interface Particle {
+public interface Particle {
 	public void move();
 	public void show();
 }
