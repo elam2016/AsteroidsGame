@@ -43,23 +43,27 @@ class SpaceShip extends Floater {
 	public void setPointDirection(int degrees) {myPointDirection = degrees;}
 	public double getPointDirection() {return myPointDirection;}
 	public SpaceShip() {
-		corners = 17;
-		int[] xS = {-20,-25,-25, -5,-5, 5,5,25,25, 5,  5, , , , , , };
-		int[] yS = { 10, 10, 15, 15,10,10,5, 5,-5,-5,-10, , , , , , };
-		if(level == 2) {
-			corners = 12;
-			int[] xS = {-25, 0,25,-5, -5, 25,  0,-25,-25,-10,-10,-25};
-			int[] yS = { 15,15,10,10,-10,-10,-15,-15,-10,-10, 10, 10};
-		}
-		xCorners = xS;
-		yCorners = yS;
-		myColor = color(204, 204, 204);;
-		myCenterX = screenSize/2;
-		myCenterY = screenSize/2;
-		myDirectionX = 0;
-		myDirectionY = 0;
-		myPointDirection = 0;
-	}
+    if(level == 1) {
+      corners = 17;
+      int[] xS = {-15,-25,-25, -5,-5, 5,5,25,25, 5,  5, -5, -5,-25,-25,-15,-15};
+      int[] yS = { 10, 10, 15, 15,10,10,3, 3,-3,-3,-10,-10,-15,-15,-10,-10, 10};
+      xCorners = xS;
+      yCorners = yS;
+    }
+    if(level == 2) {
+      corners = 12;
+      int[] xS = {-25, 0,25,-5, -5, 25,  0,-25,-25,-10,-10,-25};
+      int[] yS = { 15,15,10,10,-10,-10,-15,-15,-10,-10, 10, 10};
+      xCorners = xS;
+      yCorners = yS;
+  }
+    myColor = color(204, 204, 204);;
+    myCenterX = screenSize/2;
+    myCenterY = screenSize/2;
+    myDirectionX = 0;
+    myDirectionY = 0;
+    myPointDirection = 0;
+  }
 }
 
 public class Star {
