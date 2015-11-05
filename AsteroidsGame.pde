@@ -2,7 +2,15 @@ int screenSize = 600;
 Particle [] particles;
 SpaceShip apollo;
 Star [] stars;
+Bullet [] bullets;
 int level = 1;
+
+boolean goingUp = false;
+boolean goingLeft = false;
+boolean goingDown = false;
+boolean goingRight = false;
+boolean shoot = false;
+
 public void setup() {
 	size(screenSize, screenSize);
 	apollo = new SpaceShip();
@@ -15,6 +23,10 @@ public void setup() {
 	for(int s = 0; s < stars.length; s++) {
 		stars[s] = new Star();
 	}
+	bullets = new Bullet[screenSize/2];
+	for(int b = 0; b < bullets.length; b++) {
+		bullets[b] = new Bullet(apollo);
+	}
 }
 public void draw() {
 	background(0);
@@ -26,10 +38,13 @@ public void draw() {
 		particles[n].show();
 		particles[n].move();
 	}
+	for(int b = 0; b < bullets.length; b++) {
+			bullets[b].show();
+			bullets[b].move();
+	}
 	moveShip();
 	apollo.move();
 	apollo.show();
-
 }
 class SpaceShip extends Floater {   
 	public void setX(int x) {myCenterX = x;}
@@ -66,6 +81,38 @@ class SpaceShip extends Floater {
   }
 }
 
+public class Bullet extends Floater {
+	public void setX(int x){myCenterX=x;}
+	public int getX(){return (int)myCenterX;}
+	public void setY(int y){myCenterY=y;}   
+	public int getY(){return (int)myCenterY;}    
+	public void setDirectionX(double x){myDirectionX=x;}   
+	public double getDirectionX(){return myDirectionX;}   
+	public void setDirectionY(double y){myDirectionY=y;}  
+	public double getDirectionY(){return myDirectionY;}   
+	public void setPointDirection(int degrees){myPointDirection=degrees;}   
+	public double getPointDirection(){return myPointDirection;}
+	double bSize, dRadians;
+	public Bullet(SpaceShip ship) {
+		if(level == 1) {
+			myCenterX = apollo.myCenterX + 20;
+			myCenterY = apollo.myCenterY;
+			bSize = 4;
+			dRadians = myPointDirection*(Math.PI/180);
+			myDirectionX = (5 * Math.cos(dRadians) + apollo.myDirectionX);
+    		myDirectionY = (5 * Math.sin(dRadians) + apollo.myDirectionY);
+		}
+	}
+	public void show() {
+		fill(255);
+		ellipse((float)myCenterX, (float)myCenterY, (float)bSize, (float)bSize);
+	}
+	public void move() {
+		myCenterX = myCenterX + myDirectionX;
+		myCenterY = myCenterY + myDirectionY;
+	}
+}
+
 public class Star {
 	float starX, starY, starSize;
 	public Star() {
@@ -87,23 +134,13 @@ public class Star {
 	}
 }
 
-boolean goingUp = false;
-boolean goingLeft = false;
-boolean goingDown = false;
-boolean goingRight = false;
-boolean shoot = false;
 //int shotCounter = -10;
 public void keyPressed() {
 	if (keyCode == 38) {goingUp = true;}
 	if (keyCode == 40) {goingDown = true;}
 	if (keyCode == 39) {goingRight = true;} 
 	if (keyCode == 37) {goingLeft = true;}
-	//if (keyCode == 32) {
-		//if (shotCounter + 10 < gameCounter) {
-			//bullets.add(new Bullet(apollo));
-			//shotCounter = gameCounter;
-		//}
-	//}
+	if (keyCode == 32) {shoot = true;}
 }
 public void keyReleased() {
 	if (keyCode == 38) {goingUp = false;}
