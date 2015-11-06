@@ -2,8 +2,9 @@ int screenSize = 600;
 Particle [] particles;
 SpaceShip apollo;
 Star [] stars;
-Bullet [] bullets;
+ArrayList <Bullet> bullets = new ArrayList <Bullet>();
 int level = 1;
+int bulletCounter = 0;
 
 boolean goingUp = false;
 boolean goingLeft = false;
@@ -23,10 +24,6 @@ public void setup() {
 	for(int s = 0; s < stars.length; s++) {
 		stars[s] = new Star();
 	}
-	bullets = new Bullet[screenSize/2];
-	for(int b = 0; b < bullets.length; b++) {
-		bullets[b] = new Bullet(apollo);
-	}
 }
 public void draw() {
 	background(0);
@@ -38,9 +35,10 @@ public void draw() {
 		particles[n].show();
 		particles[n].move();
 	}
-	for(int b = 0; b < bullets.length; b++) {
-			bullets[b].show();
-			bullets[b].move();
+	for(int b = 0; b < bullets.size(); b++){
+		Bullet hit = bullets.get(b);
+		hit.show();
+		hit.move();
 	}
 	moveShip();
 	apollo.move();
@@ -80,7 +78,7 @@ class SpaceShip extends Floater {
     myPointDirection = 0;
   }
 }
-
+   
 public class Bullet extends Floater {
 	public void setX(int x){myCenterX=x;}
 	public int getX(){return (int)myCenterX;}
@@ -94,22 +92,33 @@ public class Bullet extends Floater {
 	public double getPointDirection(){return myPointDirection;}
 	double bSize, dRadians;
 	public Bullet(SpaceShip ship) {
-		if(level == 1) {
-			myCenterX = apollo.myCenterX + 20;
-			myCenterY = apollo.myCenterY;
+			myCenterX = ship.getX() + 20*myDirectionX;
+			myCenterY = ship.getY() + 20*myDirectionY;
 			bSize = 4;
+			myPointDirection = ship.getPointDirection();
 			dRadians = myPointDirection*(Math.PI/180);
-			myDirectionX = (5 * Math.cos(dRadians) + apollo.myDirectionX);
-    		myDirectionY = (5 * Math.sin(dRadians) + apollo.myDirectionY);
-		}
+			myDirectionX = (5 * Math.cos(dRadians) + ship.getDirectionX());
+			myDirectionY = (5 * Math.sin(dRadians) + ship.getDirectionY());
 	}
 	public void show() {
 		fill(255);
-		ellipse((float)myCenterX, (float)myCenterY, (float)bSize, (float)bSize);
+		if(level == 1) {
+			ellipse((float)myCenterX, (float)myCenterY, (float)bSize, (float)bSize);
+		}
+		if(level == 2) {
+			ellipse((float)myCenterX, (float)myCenterY - 12, (float)bSize, (float)bSize);
+			ellipse((float)myCenterX, (float)myCenterY + 12, (float)bSize, (float)bSize);
+		}
 	}
 	public void move() {
 		myCenterX = myCenterX + myDirectionX;
 		myCenterY = myCenterY + myDirectionY;
+	}
+}
+
+public class Asteroid extends Floater {
+	public Asteroid() {
+		
 	}
 }
 
@@ -140,14 +149,21 @@ public void keyPressed() {
 	if (keyCode == 40) {goingDown = true;}
 	if (keyCode == 39) {goingRight = true;} 
 	if (keyCode == 37) {goingLeft = true;}
-	if (keyCode == 32) {shoot = true;}
+	if (keyCode == 32) {
+		if(bulletCounter < 10) {
+			Bullet shot = new Bullet(apollo);
+			bullets.add(shot);
+			bulletCounter ++;	
+		} else {
+			bulletCounter = 0;
+		}
+	}
 }
 public void keyReleased() {
 	if (keyCode == 38) {goingUp = false;}
 	if (keyCode == 40) {goingDown = false;} 
 	if (keyCode == 39) {goingRight = false;} 
 	if (keyCode == 37) {goingLeft = false;}
-	if (keyCode == 32) {shoot = false;}
 }
 public void moveShip() {
 	if (goingUp) {
