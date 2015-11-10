@@ -40,7 +40,7 @@ public void draw() {
 		hit.show();
 		hit.move();
 	}
-	Asteroid eros = new Asteroid(apollo);
+	Asteroid eros = new Asteroid();
 	eros.show();
 	eros.move();
 	moveShip();
@@ -101,8 +101,8 @@ public class Bullet extends Floater {
 			bSize = 4;
 			myPointDirection = ship.getPointDirection();
 			dRadians = myPointDirection*(Math.PI/180);
-			myDirectionX = (25 * Math.cos(dRadians) + ship.getDirectionX());
-			myDirectionY = (25 * Math.sin(dRadians) + ship.getDirectionY());
+			myDirectionX = (5*Math.cos(dRadians) + ship.getDirectionX());
+			myDirectionY = (5*Math.sin(dRadians) + ship.getDirectionY());
 	}
 	public void show() {
 		fill(255);
@@ -134,14 +134,11 @@ public class Asteroid extends Floater {
 	public void setPointDirection(int degrees){myPointDirection=degrees;}   
 	public double getPointDirection(){return myPointDirection;}
 	double aSize, dRadians, rotSpeed;
-	public Asteroid(SpaceShip ship) {
-		myCenterX = ship.getX();
-		myCenterY = ship.getY();
-		aSize = 4;
-		myPointDirection = ship.getPointDirection();
+	public Asteroid() {
+		myCenterX = (Math.random()*screenSize + 1);
+		myCenterY = (Math.random()*screenSize + 1);
+		myPointDirection = (Math.random()*180);
 		dRadians = myPointDirection*(Math.PI/180);
-		myDirectionX = (5 * Math.cos(dRadians) + ship.getDirectionX());
-		myDirectionY = (5 * Math.sin(dRadians) + ship.getDirectionY());
 		rotSpeed = 1;
 	}
 	public void show() {
@@ -161,8 +158,8 @@ public class Asteroid extends Floater {
 public class Star {
 	float starX, starY, starSize;
 	public Star() {
-		starX = (int)(Math.random()*width);
-		starY = (int)(Math.random()*height);
+		starX = (int)(Math.random()*screenSize);
+		starY = (int)(Math.random()*screenSize);
 		starSize = (int)(Math.random()*5);
 	}
 	public void show() {
@@ -174,12 +171,11 @@ public class Star {
 		starX += .5;
 		if(starX > screenSize) {
 			starX = -5;
-			starY = (int)(Math.random()*height);
+			starY = (int)(Math.random()*screenSize);
 		}
 	}
 }
 
-//int shotCounter = -10;
 public void keyPressed() {
 	if (keyCode == 38) {goingUp = true;}
 	if (keyCode == 40) {goingDown = true;}
@@ -209,10 +205,10 @@ public void moveShip() {
 		apollo.accelerate(-0.1); //deccelerates ship (brakes)
 	}
 	if (goingRight) {
-		apollo.rotate(5);
+		apollo.rotate(3);
 	}
 	if (goingLeft) {
-		apollo.rotate(-5);
+		apollo.rotate(-3);
 	}
 }
 
