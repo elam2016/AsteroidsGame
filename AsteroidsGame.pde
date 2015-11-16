@@ -3,7 +3,7 @@ Particle [] particles;
 SpaceShip apollo;
 Star [] stars;
 public ArrayList <Bullet> bullets = new ArrayList <Bullet>();
-public ArrayList<Asteroid> asteroids = new ArrayList <Asteroid>();
+public ArrayList <Asteroid> asteroids = new ArrayList <Asteroid>();
 int level = 1;
 int bulletCounter = 0;
 
@@ -117,8 +117,8 @@ public class Bullet extends Floater {
 			bSize = 4;
 			myPointDirection = ship.getPointDirection();
 			dRadians = myPointDirection*(Math.PI/180);
-			myDirectionX = (5*Math.cos(dRadians) + ship.getDirectionX());
-			myDirectionY = (5*Math.sin(dRadians) + ship.getDirectionY());
+			myDirectionX = (10*Math.cos(dRadians) + ship.getDirectionX());
+			myDirectionY = (10*Math.sin(dRadians) + ship.getDirectionY());
 			myColor = color(255);
 	}
 	public void show() {
@@ -150,14 +150,14 @@ public class Asteroid extends Floater {
 	public double getDirectionY(){return myDirectionY;}   
 	public void setPointDirection(int degrees){myPointDirection=degrees;}   
 	public double getPointDirection(){return myPointDirection;}
-	private double rotSpeed;
+	private int rotSpeed;
 	public Asteroid() {
 		corners = 8;
-		int[] xS = {-11,-20,-14,5, 9, 7,10,-11};
-		int[] yS = { -5,-10,  8,5,10,10, 3, -5};
+		int[] xS = {-10,-8,-4, 3,12,15,  2, -5};
+		int[] yS = {  0, 7, 8,10, 2,-8,-20,-17};
 		xCorners = xS;
 		yCorners = yS;
-		myColor = color(136, 167, 139);
+		myColor = color(139, 69,  19);
 		myCenterX = (int)(Math.random()*screenSize + 1);
 		myCenterY = (int)(Math.random()*screenSize + 1);
 		myPointDirection = 0;
@@ -171,7 +171,7 @@ public class Asteroid extends Floater {
 	}
 	public void move() {
 		super.move();
-		rotate((int)rotSpeed);
+		rotate(rotSpeed);
 	}
 }
 
