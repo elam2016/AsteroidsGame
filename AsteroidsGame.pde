@@ -15,50 +15,53 @@ boolean shoot = false;
 
 public void setup() {
 	size(screenSize, screenSize);
-	apollo = new SpaceShip();
-	noStroke();
-	particles = new Particle[screenSize/5];
-	for(int n = 0; n < particles.length; n++) {
-		particles[n] = new NormalParticle();
-	}
-	stars = new Star[screenSize/10];
-	for(int s = 0; s < stars.length; s++) {
-		stars[s] = new Star();
-	}
-	for(int a = 0; a < 50; a++) {
-		asteroids.add(a, new Asteroid());
+	if(!menu){
+		apollo = new SpaceShip();
+		noStroke();
+		particles = new Particle[screenSize/5];
+		for(int p = 0; p < particles.length; p++) {
+			particles[p] = new NormalParticle();
+		}
+		stars = new Star[screenSize/10];
+		for(int s = 0; s < stars.length; s++) {
+			stars[s] = new Star();
+		}
+		for(int a = 0; a < 30; a++) {
+			asteroids.add(a, new Asteroid());
+		}
 	}
 }
 public void draw() {
 	background(0);
-	for(int s = 0; s < stars.length; s++) {
-		stars[s].show();
-		stars[s].move();
-	}
-	for(int n = 0; n < particles.length; n++) {
-		particles[n].show();
-		particles[n].move();
-	}
-	for(int b = 0; b < bullets.size(); b++) {
-		Bullet hit = bullets.get(b);
-		hit.show();
-		hit.move();
-	}
-	for(int a =0; a < asteroids.size();a++) {
-		(asteroids.get(a)).show();
-		if(dist(apollo.getX(),apollo.getY(),asteroids.get(a).getX(), asteroids.get(a).getY()) < 20) {
-			asteroids.remove(a);
-		} else
-			(asteroids.get(a)).move();
+	if(!menu) {
+		for(int s = 0; s < stars.length; s++) {
+			stars[s].show();
+			stars[s].move();p
+		}
+		for(int p = 0; p < particles.length; p++) {
+			particles[p].show();
+			particles[p].move();
+		}
 		for(int b = 0; b < bullets.size(); b++) {
-			if(dist(bullets.get(b).getX(),bullets.get(b).getY(),asteroids.get(a).getX(), asteroids.get(a).getY()) < 20) {
+			Bullet hit = bullets.get(b);
+			hit.show();
+			hit.move();
+		}
+		for(int a =0; a < asteroids.size();a++) {
+			(asteroids.get(a)).show();
+			if(dist(apollo.getX(),apollo.getY(),asteroids.get(a).getX(), asteroids.get(a).getY()) < 20) {
 				asteroids.remove(a);
-				bullets.remove(b);
-				break;
+			} else
+				(asteroids.get(a)).move();
+			for(int b = 0; b < bullets.size(); b++) {
+				if(dist(bullets.get(b).getX(),bullets.get(b).getY(),asteroids.get(a).getX(), asteroids.get(a).getY()) < 20) {
+					asteroids.remove(a);
+					bullets.remove(b);
+					break;
+				}
 			}
 		}
 	}
-	Asteroid eros = new Asteroid();
 	moveShip();
 	apollo.move();
 	apollo.show();
@@ -98,7 +101,7 @@ class SpaceShip extends Floater {
 	}
 }
 
-public class Bullet extends Floater {
+class Bullet extends Floater {
 	public void setX(int x){myCenterX=x;}
 	public int getX(){return (int)myCenterX;}
 	public void setY(int y){myCenterY=y;}   
@@ -111,14 +114,14 @@ public class Bullet extends Floater {
 	public double getPointDirection(){return myPointDirection;}
 	private double dRadians;
 	private float bSize;
-	public Bullet(SpaceShip ship) {
-			myCenterX = ship.getX();
-			myCenterY = ship.getY();
+	public Bullet(SpaceShip theShip) {
+			myCenterX = theShip.getX();
+			myCenterY = theShip.getY();
 			bSize = 4;
-			myPointDirection = ship.getPointDirection();
+			myPointDirection = theShip.getPointDirection();
 			dRadians = myPointDirection*(Math.PI/180);
-			myDirectionX = (10*Math.cos(dRadians) + ship.getDirectionX());
-			myDirectionY = (10*Math.sin(dRadians) + ship.getDirectionY());
+			myDirectionX = (5*Math.cos(dRadians) + theShip.getDirectionX());
+			myDirectionY = (5*Math.sin(dRadians) + theShip.getDirectionY());
 			myColor = color(255);
 	}
 	public void show() {
@@ -171,7 +174,7 @@ public class Asteroid extends Floater {
 	}
 	public void move() {
 		super.move();
-		rotate(rotSpeed);
+		spin(rotSpeed);
 	}
 }
 
@@ -225,10 +228,10 @@ public void moveShip() {
 		apollo.accelerate(-0.1); //deccelerates ship (brakes)
 	}
 	if (goingRight) {
-		apollo.rotate(3);
+		apollo.spin(3);
 	}
 	if (goingLeft) {
-		apollo.rotate(-3);
+		apollo.spin(-3);
 	}
 }
 
@@ -309,8 +312,8 @@ abstract class Floater {
 		myDirectionX += ((dAmount) * Math.cos(dRadians));    
 		myDirectionY += ((dAmount) * Math.sin(dRadians));       
 	}   
-	public void rotate (int nDegreesOfRotation) {     
-		//rotates the floater by a given number of degrees    
+	public void spin (int nDegreesOfRotation) {     
+		//spins the floater by a given number of degrees    
 		myPointDirection+=nDegreesOfRotation;   
 	}
 	public void move () {      
@@ -333,13 +336,13 @@ abstract class Floater {
 		stroke(myColor);
 		//convert degrees to radians for sin and cos
 		double dRadians = myPointDirection*(Math.PI/180);
-		int xRotatedTranslated, yRotatedTranslated;
+		int xspindTranslated, yspindTranslated;
 		beginShape();
 		for(int nI = 0; nI < corners; nI++) {
-			//rotate and translate the coordinates of the floater using current direction
-			xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);
-			yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);
-			vertex(xRotatedTranslated,yRotatedTranslated);
+			//spin and translate the coordinates of the floater using current direction
+			xspindTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);
+			yspindTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);
+			vertex(xspindTranslated,yspindTranslated);
 		}
 		endShape(CLOSE);
 	}
