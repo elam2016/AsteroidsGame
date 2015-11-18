@@ -6,6 +6,7 @@ public ArrayList <Bullet> bullets = new ArrayList <Bullet>();
 public ArrayList <Asteroid> asteroids = new ArrayList <Asteroid>();
 int level = 1;
 int bulletCounter = 0;
+boolean start = false;
 
 boolean goingUp = false;
 boolean goingLeft = false;
@@ -15,7 +16,6 @@ boolean shoot = false;
 
 public void setup() {
 	size(screenSize, screenSize);
-	if(!menu){
 		apollo = new SpaceShip();
 		noStroke();
 		particles = new Particle[screenSize/5];
@@ -28,15 +28,14 @@ public void setup() {
 		}
 		for(int a = 0; a < 30; a++) {
 			asteroids.add(a, new Asteroid());
-		}
 	}
 }
 public void draw() {
 	background(0);
-	if(!menu) {
+	if(start) {
 		for(int s = 0; s < stars.length; s++) {
 			stars[s].show();
-			stars[s].move();p
+			stars[s].move();
 		}
 		for(int p = 0; p < particles.length; p++) {
 			particles[p].show();
@@ -61,11 +60,24 @@ public void draw() {
 				}
 			}
 		}
+		moveShip();
+		apollo.move();
+		apollo.show();
+	} else {
+		textAlign(CENTER, CENTER);
+		textSize(45);
+		text("BLAST THE ASTEROIDS!", screenSize/2, screenSize/4);
+		textSize(30);
+		text("PLAY", screenSize/2, (screenSize*3)/4);
 	}
-	moveShip();
-	apollo.move();
-	apollo.show();
 }
+
+void mousePressed() {
+	if(!start && mouseX > (screenSize/2) - 30 && mouseX < (screenSize/2) + 30 && mouseY > ((screenSize*3)/4) - 15 && mouseY < ((screenSize*3)/4) + 15) {
+		start = true;
+	}
+}
+
 class SpaceShip extends Floater {   
 	public void setX(int x) {myCenterX = x;}
 	public int getX() {return (int)myCenterX;}
