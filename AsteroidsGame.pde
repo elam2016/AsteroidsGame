@@ -225,6 +225,13 @@ public void keyPressed() {
 			bulletCounter = 0;
 		}
 	}
+	if (key == 'h') {
+		apollo.setDirectionX(0);
+		apollo.setDirectionY(0);
+		apollo.setPointDirection(0);
+		apollo.setX(screenSize/2);
+		apollo.setY(screenSize/2);
+	}
 }
 public void keyReleased() {
 	if (keyCode == 38) {goingUp = false;}
