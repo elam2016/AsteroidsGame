@@ -6,7 +6,11 @@ public ArrayList <Bullet> bullets = new ArrayList <Bullet>();
 public ArrayList <Asteroid> asteroids = new ArrayList <Asteroid>();
 int level = 1;
 int bulletCounter = 0;
+int hitCount = 0;
+int breakCount = 0;
 boolean start = false;
+boolean gameOver = false;
+int gameCount = 0;
 
 boolean goingUp = false;
 boolean goingLeft = false;
@@ -50,29 +54,64 @@ public void draw() {
 			(asteroids.get(a)).show();
 			if(dist(apollo.getX(),apollo.getY(),asteroids.get(a).getX(), asteroids.get(a).getY()) < 20) {
 				asteroids.remove(a);
+				hitCount++;
+				if(hitCount == 10) {
+					apollo.setX(screenSize/2);
+					apollo.setY(screenSize/2);
+					apollo.setDirectionX(0);
+					apollo.setDirectionY(0);
+					apollo.setPointDirection(0);
+					gameOver = true;
+					gameCount++;
+					asteroids.add(a, new Asteroid());
+				}
 			} else
 				(asteroids.get(a)).move();
 			for(int b = 0; b < bullets.size(); b++) {
-				if(dist(bullets.get(b).getX(),bullets.get(b).getY(),asteroids.get(a).getX(), asteroids.get(a).getY()) < 20) {
+				if(dist(bullets.get(b).getX(),bullets.get(b).getY(),asteroids.get(a).getX(), asteroids.get(a).getY()) < 25) {
+					breakCount++;
+					if(breakCount == 5) {
+						level++;
+					}
 					asteroids.remove(a);
 					bullets.remove(b);
 					break;
 				}
 			}
 		}
-		moveShip();
-		apollo.move();
-		apollo.show();
+		fill(255);
+		textSize(15);
+		text("Level: " + level, 30, 10);
+		if(gameCount == 0){
+			moveShip();
+			apollo.move();
+			apollo.show();
+		}
+		if(gameOver) {
+			fill(255);
+			textAlign(CENTER, CENTER);
+			textSize(45);
+			text("YOU LOST", screenSize/2, screenSize/4);
+			textSize(30);
+			text("PLAY AGAIN", screenSize/2, screenSize/2);
+		}
 	} else {
+		fill(255);
 		textAlign(CENTER, CENTER);
 		textSize(45);
 		text("BLAST THE ASTEROIDS!", screenSize/2, screenSize/4);
 		textSize(30);
 		text("PLAY", screenSize/2, (screenSize*3)/4);
+		hitCount = 0;
+		gameOver = false;
+		gameCount = 0;
 	}
 }
 
 void mousePressed() {
+	if(gameOver && mouseX > (screenSize/2) - 50 && mouseX < (screenSize/2) + 50 && mouseY > (screenSize/2) - 15 && mouseY < (screenSize/2) + 15) {
+		start = false;
+	}
 	if(!start && mouseX > (screenSize/2) - 30 && mouseX < (screenSize/2) + 30 && mouseY > ((screenSize*3)/4) - 15 && mouseY < ((screenSize*3)/4) + 15) {
 		start = true;
 	}
